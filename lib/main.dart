@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_theme_provider/theme.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Theme Provider',
-      theme: light,
-      home: HomePage(),
+    return ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+          child: Consumer<ThemeNotifier>(
+            builder: (context, ThemeNotifier notifier, child) {
+
+              return      MaterialApp(
+              title: 'Flutter Theme Provider',
+              theme: notifier.darkTheme ? dark : light,
+              home: HomePage(),
+            );
+            } ,
+          ),
     );
   }
 }
@@ -26,12 +35,14 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SwitchListTile(
-              title: Text("Dark Mode"),
-              onChanged: (val){
-                
-              },
-              value: false,
+            Consumer<ThemeNotifier>(
+                          builder: (context,notifier,child) => SwitchListTile(
+                title: Text("Dark Mode"),
+                onChanged: (val){
+                  notifier.toggleTheme();
+                },
+                value: notifier.darkTheme ,
+              ),
             ),
 
             Card(
